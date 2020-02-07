@@ -64,7 +64,6 @@ class Train
   private #метод используется только объектом для получения индекса
 
   def current_station_index
-    puts @current_route.stations.index(current_station)
     @current_route.stations.index(current_station)
   end
 

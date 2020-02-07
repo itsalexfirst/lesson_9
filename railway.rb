@@ -6,6 +6,54 @@ class Railway
     @routes = []
   end
 
+  def start
+    loop do
+      case start_menu
+      when '0'
+        break
+      when '1'
+        work_with_stations
+      when '2'
+        work_with_trains
+      when '3'
+        work_with_routes
+      else
+        error_menu
+      end
+    end
+  end
+
+  def seed
+    station1 = Station.new('st1')
+    station2 = Station.new('st2')
+    station3 = Station.new('st3')
+
+    @stations = [
+      station1,
+      station2,
+      station3,
+    ]
+
+    route = Route.new(station1, station3, 'rt1')
+    route.add(station2)
+
+    @routes = [route]
+
+    train = PassengerTrain.new('tr1')
+    train.add_route(route)
+
+    @trains = [train]
+  end
+
+  def clear
+    self.stations = []
+    self.trains = []
+    self.routes = []
+  end
+
+  private #я б кое какие штуки оставил снаружи.
+  #возможно взаимодействие между другими железными дорогами
+
   def stations_list
     @stations.each_index { |index| puts "#{index+1}. #{@stations[index].name}" }
   end
@@ -24,8 +72,6 @@ class Railway
     end
   end
 
-  private #доступ снаружи ко всем методам кроме информационных и меню можно ограничить
-
   def select_station(station_name)
     @stations.find { |station| station.name.include?(station_name) }
   end
@@ -38,7 +84,6 @@ class Railway
     @routes.find { |route| route.number.include?(route_number) }
   end
 
-  #EXIST
   def station_exist?(station_name)
     @stations.find { |station| station.name.include?(station_name) }
   end
@@ -69,7 +114,6 @@ class Railway
       puts 'Станции с таким названием нет'
     end
   end
-
 
   def station_add
     print 'Введите название станции: '
@@ -161,7 +205,6 @@ class Railway
     end
   end
 
-
   def route_add
     print 'Введите номер маршрута: '
     number = gets.chomp
@@ -203,8 +246,6 @@ class Railway
     end
   end
 
-
-
   def error_menu
     puts 'Такого пункта нет'
   end
@@ -244,7 +285,7 @@ class Railway
   end
 
   def work_with_stations
-    while true
+    loop do
       case stations_menu
       when '0'
         break
@@ -261,7 +302,7 @@ class Railway
   end
 
   def  work_with_trains
-    while true
+    loop do
       case trains_menu
       when '0'
         break
@@ -282,7 +323,7 @@ class Railway
   end
 
   def work_with_routes
-    while true
+    loop do
       case routes_menu
       when '0'
         break
@@ -298,50 +339,5 @@ class Railway
     end
   end
 
-public #доступ необходим для управления объектом через меню
 
-  def start
-    while true
-      case start_menu
-      when '0'
-        break
-      when '1'
-        work_with_stations
-      when '2'
-        work_with_trains
-      when '3'
-        work_with_routes
-      else
-        error_menu
-      end
-    end
-  end
-
-  def seed
-    station1 = Station.new('st1')
-    station2 = Station.new('st2')
-    station3 = Station.new('st3')
-
-    @stations = [
-      station1,
-      station2,
-      station3,
-    ]
-
-    route = Route.new(station1, station3, 'rt1')
-    route.add(station2)
-
-    @routes = [route]
-
-    train = PassengerTrain.new('tr1')
-    train.add_route(route)
-
-    @trains = [train]
-  end
-
-  def clear
-    self.stations = []
-    self.trains = []
-    self.routes = []
-  end
 end

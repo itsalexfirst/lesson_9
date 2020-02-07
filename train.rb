@@ -5,7 +5,7 @@ class Train
   def initialize(number, type)
     @number = number
     @type = type
-    @carriage = []
+    @carriages = []
     @speed = 0
     @current_route = nil
   end
@@ -22,12 +22,12 @@ class Train
     @speed = 0
   end
 
-  def add_carriage(number, type)
-    @carriage << Carriage.new(number, type) if @speed == 0
+  def add_carriage(carriage)
+    @carriages << carriage if @speed == 0
   end
 
   def remove_carriage
-    @carriage.pop if @speed == 0
+    @carriages.pop if @speed == 0
   end
 
   def add_route(current_route)
@@ -36,12 +36,7 @@ class Train
   end
 
   def current_station
-    @current_route.stations.find{ |station| station.trains.include?(self) }
-  end
-
-  def current_station_index
-    puts @current_route.stations.index(current_station)
-    @current_route.stations.index(current_station)
+    @current_route.stations.find { |station| station.trains.include?(self) }
   end
 
   def prev_station
@@ -54,15 +49,24 @@ class Train
 
   def go_next
     return unless next_station
-      departure_station = current_station
-      next_station.take_train(self)
-      departure_station.send_train(self)
+    departure_station = current_station
+    next_station.take_train(self)
+    departure_station.send_train(self)
   end
 
   def go_prev
     return unless prev_station
-      departure_station = current_station
-      prev_station.take_train(self)
-      departure_station.send_train(self)
+    departure_station = current_station
+    prev_station.take_train(self)
+    departure_station.send_train(self)
   end
+
+  private #метод используется только объектом для получения индекса
+
+  def current_station_index
+    puts @current_route.stations.index(current_station)
+    @current_route.stations.index(current_station)
+  end
+
+
 end

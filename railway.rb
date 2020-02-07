@@ -6,40 +6,6 @@ class Railway
     @routes = []
   end
 
-  def routes_menu
-    puts '1. Список маршрутов'
-    puts '2. Редактировать маршрут'
-    puts '3. Создать маршрут'
-    puts '0. Назад'
-    gets.chomp
-  end
-
-  def select_station(station_name)
-    @stations.find{ |station| station.name.include?(station_name) }
-  end
-
-  def select_train(train_number)
-    @trains.find{ |train| train.number.include?(train_number) }
-  end
-
-  def select_route(route_number)
-    @routes.find{ |route| route.number.include?(route_number) }
-  end
-
-  #EXIST
-  def station_exist?(station_name)
-    @stations.find{ |station| station.name.include?(station_name) }
-  end
-
-  def train_exist?(train_number)
-    @trains.find{ |train| train.number.include?(train_number) }
-  end
-
-  def route_exist?(route_number)
-    @routes.find{ |route| route.number.include?(route_number) }
-  end
-
-  #LISTING
   def stations_list
     @stations.each_index { |index| puts "#{index+1}. #{@stations[index].name}" }
   end
@@ -58,9 +24,36 @@ class Railway
     end
   end
 
+  private #доступ снаружи ко всем методам кроме информационных и меню можно ограничить
+
+  def select_station(station_name)
+    @stations.find { |station| station.name.include?(station_name) }
+  end
+
+  def select_train(train_number)
+    @trains.find { |train| train.number.include?(train_number) }
+  end
+
+  def select_route(route_number)
+    @routes.find { |route| route.number.include?(route_number) }
+  end
+
+  #EXIST
+  def station_exist?(station_name)
+    @stations.find { |station| station.name.include?(station_name) }
+  end
+
+  def train_exist?(train_number)
+    @trains.find { |train| train.number.include?(train_number) }
+  end
+
+  def route_exist?(route_number)
+    @routes.find { |route| route.number.include?(route_number) }
+  end
+
   def station_trains(name)
     trains = select_station(name).trains
-    trains.each_index{ |index| puts "#{index+1}. #{trains[index].number}. тип: #{trains[index].type}. вагонов: #{trains[index].carriage}" }
+    trains.each_index { |index| puts "#{index+1}. #{trains[index].number}. тип: #{trains[index].type}. вагонов: #{trains[index].carriage}" }
   end
 
   def station_trains_list
@@ -116,7 +109,8 @@ class Railway
       puts '2. Удалить'
       case gets.chomp
       when '1'
-        carriage = 'carriage'
+        type = select_train(number).type
+        carriage = Carriage.new('crriage', type)
         select_train(number).add_carriage(carriage)
       when '2'
         select_train(number).remove_carriage
@@ -241,60 +235,82 @@ class Railway
     gets.chomp
   end
 
+  def routes_menu
+    puts '1. Список маршрутов'
+    puts '2. Редактировать маршрут'
+    puts '3. Создать маршрут'
+    puts '0. Назад'
+    gets.chomp
+  end
+
+  def work_with_stations
+    while true
+      case stations_menu
+      when '0'
+        break
+      when '1'
+        stations_list
+      when '2'
+        station_trains_list
+      when '3'
+        station_add
+      else
+        error_menu
+      end
+    end
+  end
+
+  def  work_with_trains
+    while true
+      case trains_menu
+      when '0'
+        break
+      when '1'
+        trains_list
+      when '2'
+        train_add
+      when '3'
+        carriage
+      when '4'
+        train_move
+      when '5'
+        train_add_route
+      else
+        error_menu
+      end
+    end
+  end
+
+  def work_with_routes
+    while true
+      case routes_menu
+      when '0'
+        break
+      when '1'
+        route_list
+      when '2'
+        route_edit
+      when '3'
+        route_add
+      else
+        error_menu
+      end
+    end
+  end
+
+public #доступ необходим для управления объектом через меню
+
   def start
     while true
       case start_menu
       when '0'
         break
       when '1'
-        while true
-          case stations_menu
-          when '0'
-            break
-          when '1'
-            stations_list
-          when '2'
-            station_trains_list
-          when '3'
-            station_add
-          else
-            error_menu
-          end
-        end
+        work_with_stations
       when '2'
-        while true
-          case trains_menu
-          when '0'
-            break
-          when '1'
-            trains_list
-          when '2'
-            train_add
-          when '3'
-            carriage
-          when '4'
-            train_move
-          when '5'
-            train_add_route
-          else
-            error_menu
-          end
-        end
+        work_with_trains
       when '3'
-        while true
-          case routes_menu
-          when '0'
-            break
-          when '1'
-            route_list
-          when '2'
-            route_edit
-          when '3'
-            route_add
-          else
-            error_menu
-          end
-        end
+        work_with_routes
       else
         error_menu
       end

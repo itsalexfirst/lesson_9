@@ -1,8 +1,18 @@
 class Train
+  include ManufacturingCompany
+  include InstanceCounter
   attr_reader :number, :carriage, :type, :current_route
   attr_accessor :current_station
 
+  @@trains = []
+
+  def self.find(number)
+    @@trains.find { |train| train.number.include?(number) }
+  end
+
   def initialize(number, type)
+    register_instance
+    @@trains << self
     @number = number
     @type = type
     @carriages = []

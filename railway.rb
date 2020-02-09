@@ -51,8 +51,7 @@ class Railway
     self.routes = []
   end
 
-  private #я б кое какие штуки оставил снаружи.
-  #возможно взаимодействие между другими железными дорогами
+  private
 
   def stations_list
     @stations.each_index { |index| puts "#{index+1}. #{@stations[index].name}" }
@@ -71,6 +70,10 @@ class Railway
       end
     end
   end
+
+  #Шесть методов ниже работают не совсем корректно
+  #могут выдавать обьект у которого имя или номер совпадает частично
+  #если имена санций 'st1', 'st2', 'st3', то поиск 'st', или '1' выдаст станцию с именем 'st1'
 
   def select_station(station_name)
     @stations.find { |station| station.name.include?(station_name) }

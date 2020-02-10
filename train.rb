@@ -1,18 +1,19 @@
 class Train
   include ManufacturingCompany
   include InstanceCounter
+
   attr_reader :number, :carriage, :type, :current_route
   attr_accessor :current_station
 
-  @@trains = []
+  @@trains = {}
 
   def self.find(number)
-    @@trains.find { |train| train.number.include?(number) }
+    @@trains[number]
   end
 
   def initialize(number, type)
     register_instance
-    @@trains << self
+    @@trains[number] = self
     @number = number
     @type = type
     @carriages = []
@@ -71,7 +72,7 @@ class Train
     departure_station.send_train(self)
   end
 
-  private #метод используется только объектом для получения индекса
+  private
 
   def current_station_index
     @current_route.stations.index(current_station)

@@ -5,11 +5,18 @@ module InstanceCounter
   end
 
   module ClassMethods
-    attr_accessor :instances_count
+    def instances_count
+      @instances_count ||= 0
+    end
+
+    def instances_count=(count)
+      @instances_count = count
+    end
   end
 
   module InstanceMethods
     protected
+
     def register_instance
       self.class.instances_count ||= 0
       self.class.instances_count += 1

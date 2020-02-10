@@ -9,5 +9,5 @@ require_relative 'carriage'
 require_relative 'railway'
 
 railway = Railway.new
-railway.seed
-railway.start
+#railway.seed
+#railway.start

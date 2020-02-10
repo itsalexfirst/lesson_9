@@ -71,32 +71,28 @@ class Railway
     end
   end
 
-  #Шесть методов ниже работают не совсем корректно
-  #могут выдавать обьект у которого имя или номер совпадает частично
-  #если имена санций 'st1', 'st2', 'st3', то поиск 'st', или '1' выдаст станцию с именем 'st1'
-
   def select_station(station_name)
-    @stations.find { |station| station.name.include?(station_name) }
+    @stations.find { |station| station.name == station_name }
   end
 
   def select_train(train_number)
-    @trains.find { |train| train.number.include?(train_number) }
+    @trains.find { |train| train.number == train_number }
   end
 
   def select_route(route_number)
-    @routes.find { |route| route.number.include?(route_number) }
+    @routes.find { |route| route.number == route_number }
   end
 
   def station_exist?(station_name)
-    @stations.find { |station| station.name.include?(station_name) }
+    @stations.find { |station| station.name == station_name }
   end
 
   def train_exist?(train_number)
-    @trains.find { |train| train.number.include?(train_number) }
+    @trains.find { |train| train.number == train_number }
   end
 
   def route_exist?(route_number)
-    @routes.find { |route| route.number.include?(route_number) }
+    @routes.find { |route| route.number == route_number }
   end
 
   def station_trains(name)

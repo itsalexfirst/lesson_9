@@ -3,10 +3,18 @@ class Route
 
   attr_reader :stations, :number
 
+  def valid?
+    validate!
+    true
+  rescue
+    false
+  end
+
   def initialize(start_station, end_station, number)
-    register_instance
     @stations = [start_station, end_station]
     @number = number
+    validate!
+    register_instance
   end
 
   def add(station)
@@ -15,5 +23,11 @@ class Route
 
   def remove(station)
     @stations.delete(station)
+  end
+
+  private
+
+  def validate!
+    raise "Начальная и конечная станция должны быть разными" if start_station == end_station,
   end
 end

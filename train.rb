@@ -5,20 +5,30 @@ class Train
   attr_reader :number, :carriage, :type, :current_route
   attr_accessor :current_station
 
+  TRAIN_NUMBER_FORMAT = /^[a-z0-9]{3}-?[a-z0-9]{2}$/i
+
   @@trains = {}
 
   def self.find(number)
     @@trains[number]
   end
 
+  def valid?
+    validate!
+    true
+  rescue
+    false
+  end
+
   def initialize(number, type)
-    register_instance
-    @@trains[number] = self
     @number = number
     @type = type
     @carriages = []
     @speed = 0
     @current_route = nil
+    validate!
+    register_instance
+    @@trains[number] = self
   end
 
   def add_speed(plus_speed)
@@ -73,6 +83,11 @@ class Train
   end
 
   private
+
+  def validate!
+    raise "Непрвильный формат номера поезда ХХХ-ХХ" if number !~ TRAIN_NUMBER_FORMAT
+    raise "Поезд с таким номером уже есть" if @@trains[number] != nil
+  end
 
   def current_station_index
     @current_route.stations.index(current_station)

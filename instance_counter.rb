@@ -5,12 +5,10 @@ module InstanceCounter
   end
 
   module ClassMethods
+    attr_writer :instances_count
+
     def instances_count
       @instances_count ||= 0
-    end
-
-    def instances_count=(count)
-      @instances_count = count
     end
   end
 

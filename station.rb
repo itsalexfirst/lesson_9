@@ -4,15 +4,24 @@ class Station
   attr_reader :name, :trains
 
   @@stations = []
+
   def self.all
     @@stations
   end
 
+  def valid?
+    validate!
+    true
+  rescue
+    false
+  end
+
   def initialize(name)
-    register_instance
-    @@stations << self
     @name = name
     @trains = []
+    validate!
+    register_instance
+    @@stations << self
   end
 
   def take_train(train)
@@ -25,5 +34,11 @@ class Station
 
   def send_train(train)
     @trains.delete(train)
+  end
+
+  private
+
+  def validate!
+    raise "Станция с таким названием уже есть" if @@stations.find { |station| station.name == name }
   end
 end

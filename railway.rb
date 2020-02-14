@@ -39,7 +39,7 @@ class Railway
 
     @routes = [route]
 
-    train = PassengerTrain.new('tr1')
+    train = PassengerTrain.new('trn-1p')
     train.add_route(route)
 
     @trains = [train]
@@ -117,31 +117,29 @@ class Railway
   def station_add
     print 'Введите название станции: '
     name = gets.chomp
-    unless station_exist?(name)
-      @stations << Station.new(name)
-    else
-      puts 'Станция с таким названием уже есть'
-    end
+    @stations << Station.new(name)
+    rescue StandardError => e
+    puts e.message
+    retry
   end
 
   def train_add
     print 'Введите номер поезда: '
     number = gets.chomp
-    unless train_exist?(number)
-      puts 'Выберите тип'
-      puts '1. Пассажирский'
-      puts '2. Грузовой'
-        case gets.chomp
-        when '1'
-          @trains << PassengerTrain.new(number)
-        when '2'
-          @trains << CargoTrain.new(number)
-        else
-          error_menu
-        end
-    else
-      puts 'Поезд с таким номером уже существует'
-    end
+    puts 'Выберите тип'
+    puts '1. Пассажирский'
+    puts '2. Грузовой'
+      case gets.chomp
+      when '1'
+        @trains << PassengerTrain.new(number)
+      when '2'
+        @trains << CargoTrain.new(number)
+      else
+        error_menu
+      end
+    rescue StandardError => e
+    puts e.message
+    retry
   end
 
   def carriage

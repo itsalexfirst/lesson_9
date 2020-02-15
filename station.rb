@@ -39,6 +39,7 @@ class Station
   private
 
   def validate!
+    raise "Имя не может быть пустым" if name == ''
     raise "Станция с таким названием уже есть" if @@stations.find { |station| station.name == name }
   end
 end

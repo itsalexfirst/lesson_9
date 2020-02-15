@@ -28,6 +28,7 @@ class Route
   private
 
   def validate!
-    raise "Начальная и конечная станция должны быть разными" if start_station == end_station,
+    raise "Номер не может быть пустым" if number == ''
+    raise "Начальная и конечная станция должны быть разными" if self.stations[0] == self.stations[-1]
   end
 end

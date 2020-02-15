@@ -119,7 +119,7 @@ class Railway
     name = gets.chomp
     @stations << Station.new(name)
     rescue StandardError => e
-    puts e.message
+      puts e.message
     retry
   end
 
@@ -138,7 +138,7 @@ class Railway
         error_menu
       end
     rescue StandardError => e
-    puts e.message
+      puts e.message
     retry
   end
 
@@ -218,6 +218,9 @@ class Railway
     else
       puts 'Маршрут с таким номером уже есть'
     end
+    rescue StandardError => e
+      puts e.message
+    retry
   end
 
   def route_edit

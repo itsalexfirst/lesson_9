@@ -1,7 +1,7 @@
 class Carriage
   include ManufacturingCompany
 
-  attr_reader :type
+  attr_reader :type, :number
 
   def initialize(number, type)
     @number = number

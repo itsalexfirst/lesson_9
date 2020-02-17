@@ -17,6 +17,8 @@ class Railway
         work_with_trains
       when '3'
         work_with_routes
+      when '4'
+        global_info
       else
         error_menu
       end
@@ -146,15 +148,44 @@ class Railway
     print 'Введите номер поезда: '
     number = gets.chomp
     if train_exist?(number)
+      train = select_train(number)
+      type = select_train(number).type
+      train_carriage_list(train)
       puts '1. Добавить'
       puts '2. Удалить'
+      puts '3. Загрузить'
       case gets.chomp
       when '1'
-        type = select_train(number).type
-        carriage = Carriage.new('crriage', type)
-        select_train(number).add_carriage(carriage)
+        if type == 'cargo'
+          print 'Введите объем вагона: '
+          volume = gets.to_i
+          number = train.carriages.size + 1
+          carriage = CargoCarriage.new(number, volume)
+          train.add_carriage(carriage)
+        elsif type == 'passenger'
+          print 'Введите количество мест: '
+          seats = gets.to_i
+          number = train.carriages.size + 1
+          carriage = PassengerCarriage.new(number, seats)
+          train.add_carriage(carriage)
+        end
       when '2'
-        select_train(number).remove_carriage
+        train.remove_carriage
+      when '3'
+        puts 'Введите номер вагона:'
+        number = gets.to_i
+        carriage = train.carriages.find { |carriage| carriage.number == number }
+        if carriage != nil
+          if type == 'cargo'
+            print 'Введите объем'
+            volume = gets.to_i
+            carriage.load_cargo(volume)
+          elsif type == 'passenger'
+            carriage.load_passenger
+          end
+        else
+          puts 'Вагона с таким номером нет'
+        end
       else
         error_menu
       end
@@ -246,6 +277,39 @@ class Railway
     end
   end
 
+  def global_info
+    puts "\nСтанции"
+    @stations.each do |station|
+      puts "Станция: #{station.name}"
+      station_trains_list(station)
+    end
+
+    puts "\nПоезда"
+    @trains.each do |train|
+      puts "Поезд номер: #{train.number}"
+      train_carriage_list(train)
+    end
+  end
+
+  def station_trains_list(station)
+    station.all_trains do |train|
+      puts "  Поезд номер: #{train.number}. Тип: #{train.type}. Вагонов: #{train.carriages.size}"
+    end
+  end
+
+  def train_carriage_list(train)
+    if train.type == 'cargo'
+      train.all_carriages do |carriage|
+        puts "  Вагон номер: #{carriage.number}. Тип: #{carriage.type}. Свободно: #{carriage.free_volume}. Занято: #{carriage.volume} объема"
+      end
+    elsif train.type == 'passenger'
+      train.all_carriages do |carriage|
+        puts "  Вагон номер: #{carriage.number}. Тип: #{carriage.type}. Свободно: #{carriage.free_seats}. Занято: #{carriage.seats} мест"
+      end
+    end
+  end
+
+
   def error_menu
     puts 'Такого пункта нет'
   end
@@ -254,6 +318,7 @@ class Railway
     puts '1. Станции'
     puts '2. Поезда'
     puts '3. Маршруты'
+    puts '4. Информация о всех станциях и поездах'
     puts '0. Выход'
     gets.chomp
   end
@@ -269,7 +334,7 @@ class Railway
   def trains_menu
     puts '1. Список поездов'
     puts '2. Создать поезд'
-    puts '3. Прицепить или отцепить вагон'
+    puts '3. Вагоны'
     puts '4. Переместить поезд'
     puts '5. Назначить маршрут'
     puts '0. Назад'
@@ -338,6 +403,4 @@ class Railway
       end
     end
   end
-
-
 end

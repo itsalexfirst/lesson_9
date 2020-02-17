@@ -2,7 +2,7 @@ class Train
   include ManufacturingCompany
   include InstanceCounter
 
-  attr_reader :number, :carriage, :type, :current_route
+  attr_reader :number, :carriages, :type, :current_route
   attr_accessor :current_station
 
   TRAIN_NUMBER_FORMAT = /^[a-z0-9]{3}-?[a-z0-9]{2}$/i
@@ -80,6 +80,10 @@ class Train
     departure_station = current_station
     prev_station.take_train(self)
     departure_station.send_train(self)
+  end
+
+  def all_carriages
+    @carriages.each { |carriage| yield carriage } if block_given?
   end
 
   private

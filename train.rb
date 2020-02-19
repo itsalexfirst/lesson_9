@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
+# rubocop:disable Style/ClassVars
 class Train
   include ManufacturingCompany
   include InstanceCounter
 
   attr_reader :number, :carriages, :type, :current_route
-  attr_accessor :current_station
 
-  TRAIN_NUMBER_FORMAT = /^[a-z0-9]{3}-?[a-z0-9]{2}$/i
+  TRAIN_NUMBER_FORMAT = /^[a-z0-9]{3}-?[a-z0-9]{2}$/i.freeze
 
   @@trains = {}
 
@@ -16,7 +18,7 @@ class Train
   def valid?
     validate!
     true
-  rescue
+  rescue StandardError
     false
   end
 
@@ -44,11 +46,11 @@ class Train
   end
 
   def add_carriage(carriage)
-    @carriages << carriage if @speed == 0
+    @carriages << carriage if @speed.zero?
   end
 
   def remove_carriage
-    @carriages.pop if @speed == 0
+    @carriages.pop if @speed.zero?
   end
 
   def add_route(current_route)
@@ -70,6 +72,7 @@ class Train
 
   def go_next
     return unless next_station
+
     departure_station = current_station
     next_station.take_train(self)
     departure_station.send_train(self)
@@ -77,6 +80,7 @@ class Train
 
   def go_prev
     return unless prev_station
+
     departure_station = current_station
     prev_station.take_train(self)
     departure_station.send_train(self)
@@ -89,13 +93,12 @@ class Train
   private
 
   def validate!
-    raise "Непрвильный формат номера поезда ХХХ-ХХ" if number !~ TRAIN_NUMBER_FORMAT
-    raise "Поезд с таким номером уже есть" if @@trains[number] != nil
+    raise 'Непрвильный формат номера поезда ХХХ-ХХ' if number !~ TRAIN_NUMBER_FORMAT
+    raise 'Поезд с таким номером уже есть' unless @@trains[number].nil?
   end
 
   def current_station_index
     @current_route.stations.index(current_station)
   end
-
-
 end
+# rubocop:enable Style/ClassVars

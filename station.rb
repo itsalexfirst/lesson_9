@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# rubocop:disable Style/ClassVars
 class Station
   include InstanceCounter
 
@@ -12,7 +15,7 @@ class Station
   def valid?
     validate!
     true
-  rescue
+  rescue StandardError
     false
   end
 
@@ -43,7 +46,8 @@ class Station
   private
 
   def validate!
-    raise "Имя не может быть пустым" if name == ''
-    raise "Станция с таким названием уже есть" if @@stations.find { |station| station.name == name }
+    raise 'Имя не может быть пустым' if name == ''
+    raise 'Станция с таким названием уже есть' if @@stations.find { |station| station.name == name }
   end
 end
+# rubocop:enable Style/ClassVars

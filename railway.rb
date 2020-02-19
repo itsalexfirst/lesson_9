@@ -1,5 +1,7 @@
-class Railway
+# frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
+class Railway
   def initialize
     @stations = []
     @trains = []
@@ -33,7 +35,7 @@ class Railway
     @stations = [
       station1,
       station2,
-      station3,
+      station3
     ]
 
     route = Route.new(station1, station3, 'rt1')
@@ -56,19 +58,19 @@ class Railway
   private
 
   def stations_list
-    @stations.each_index { |index| puts "#{index+1}. #{@stations[index].name}" }
+    @stations.each_index { |index| puts "#{index + 1}. #{@stations[index].name}" }
   end
 
   def trains_list
-    @trains.each_index { |index| puts "#{index+1}. #{@trains[index].number} #{@trains[index].type}" }
+    @trains.each_index { |index| puts "#{index + 1}. #{@trains[index].number} #{@trains[index].type}" }
   end
 
   def route_list
     @routes.each_index do |index|
-      puts "#{index+1}. #{@routes[index].number}"
+      puts "#{index + 1}. #{@routes[index].number}"
       stations = @routes[index].stations
       stations.each_index do |index2|
-        puts "  #{index2+1}. #{stations[index2].name}"
+        puts "  #{index2 + 1}. #{stations[index2].name}"
       end
     end
   end
@@ -99,17 +101,19 @@ class Railway
 
   def station_trains(name)
     trains = select_station(name).trains
-    trains.each_index { |index| puts "#{index+1}. #{trains[index].number}. тип: #{trains[index].type}. вагонов: #{trains[index].carriage}" }
+    trains.each_index do |index|
+      puts "#{index + 1}. #{trains[index].number}. тип: #{trains[index].type}. вагонов: #{trains[index].carriage}"
+    end
   end
 
-  def station_trains_list
+  def station_trains_list_menu
     print 'Введите название станции: '
     name = gets.chomp
     if station_exist?(name)
-      unless select_station(name).trains == []
-        station_trains(name)
-      else
+      if select_station(name).trains == []
         puts 'На станции нет поездов'
+      else
+        station_trains(name)
       end
     else
       puts 'Станции с таким названием нет'
@@ -120,28 +124,62 @@ class Railway
     print 'Введите название станции: '
     name = gets.chomp
     @stations << Station.new(name)
-    rescue StandardError => e
-      puts e.message
+  rescue StandardError => e
+    puts e.message
     retry
   end
 
+  # rubocop:disable Metrics/AbcSize
   def train_add
     print 'Введите номер поезда: '
     number = gets.chomp
     puts 'Выберите тип'
     puts '1. Пассажирский'
     puts '2. Грузовой'
-      case gets.chomp
-      when '1'
-        @trains << PassengerTrain.new(number)
-      when '2'
-        @trains << CargoTrain.new(number)
-      else
-        error_menu
-      end
-    rescue StandardError => e
-      puts e.message
+    case gets.chomp
+    when '1'
+      @trains << PassengerTrain.new(number)
+    when '2'
+      @trains << CargoTrain.new(number)
+    else
+      error_menu
+    end
+  rescue StandardError => e
+    puts e.message
     retry
+  end
+
+  def carriage_add(train, type)
+    if type == 'cargo'
+      print 'Введите объем вагона: '
+      volume = gets.to_i
+      number = train.carriages.size + 1
+      carriage = CargoCarriage.new(number, volume)
+      train.add_carriage(carriage)
+    elsif type == 'passenger'
+      print 'Введите количество мест: '
+      seats = gets.to_i
+      number = train.carriages.size + 1
+      carriage = PassengerCarriage.new(number, seats)
+      train.add_carriage(carriage)
+    end
+  end
+
+  def carriage_load(train, type)
+    puts 'Введите номер вагона:'
+    number = gets.to_i
+    carriage = train.carriages.find { |car| car.number == number }
+    if !carriage.nil?
+      if type == 'cargo'
+        print 'Введите объем'
+        volume = gets.to_i
+        carriage.load_cargo(volume)
+      elsif type == 'passenger'
+        carriage.load_passenger
+      end
+    else
+      puts 'Вагона с таким номером нет'
+    end
   end
 
   def carriage
@@ -156,36 +194,11 @@ class Railway
       puts '3. Загрузить'
       case gets.chomp
       when '1'
-        if type == 'cargo'
-          print 'Введите объем вагона: '
-          volume = gets.to_i
-          number = train.carriages.size + 1
-          carriage = CargoCarriage.new(number, volume)
-          train.add_carriage(carriage)
-        elsif type == 'passenger'
-          print 'Введите количество мест: '
-          seats = gets.to_i
-          number = train.carriages.size + 1
-          carriage = PassengerCarriage.new(number, seats)
-          train.add_carriage(carriage)
-        end
+        carriage_add(train, type)
       when '2'
         train.remove_carriage
       when '3'
-        puts 'Введите номер вагона:'
-        number = gets.to_i
-        carriage = train.carriages.find { |carriage| carriage.number == number }
-        if carriage != nil
-          if type == 'cargo'
-            print 'Введите объем'
-            volume = gets.to_i
-            carriage.load_cargo(volume)
-          elsif type == 'passenger'
-            carriage.load_passenger
-          end
-        else
-          puts 'Вагона с таким номером нет'
-        end
+        carriage_load(train, type)
       else
         error_menu
       end
@@ -197,7 +210,7 @@ class Railway
   def train_move
     print 'Введите номер поезда: '
     number = gets.chomp
-    if train_exist?(number) && select_train(number).current_route != nil
+    if train_exist?(number) && !select_train(number).current_route.nil?
       puts '1. На следующую станцию'
       puts '2. На предыдущую станцию'
       case gets.chomp
@@ -217,7 +230,7 @@ class Railway
     print 'Введите номер поезда: '
     number = gets.chomp
     if train_exist?(number)
-      if select_train(number).current_route == nil
+      if select_train(number).current_route.nil?
         print 'введите номер маршрута: '
         index = gets.chomp
         if route_exist?(index)
@@ -236,21 +249,21 @@ class Railway
   def route_add
     print 'Введите номер маршрута: '
     number = gets.chomp
-    unless route_exist?(number)
+    if route_exist?(number)
+      puts 'Маршрут с таким номером уже есть'
+    else
       print 'Введите начальную станцию: '
       start_station = gets.chomp
       print 'Введите конечную станцию: '
       end_station = gets.chomp
       if station_exist?(start_station) && station_exist?(end_station)
-       @routes << Route.new(select_station(start_station), select_station(end_station), number)
+        @routes << Route.new(select_station(start_station), select_station(end_station), number)
       else
         puts 'Проверте правильность ввода названий станций'
       end
-    else
-      puts 'Маршрут с таким номером уже есть'
     end
-    rescue StandardError => e
-      puts e.message
+  rescue StandardError => e
+    puts e.message
     retry
   end
 
@@ -300,15 +313,19 @@ class Railway
   def train_carriage_list(train)
     if train.type == 'cargo'
       train.all_carriages do |carriage|
-        puts "  Вагон номер: #{carriage.number}. Тип: #{carriage.type}. Свободно: #{carriage.free_volume}. Занято: #{carriage.volume} объема"
+        print "  Вагон номер: #{carriage.number}. "
+        print "Тип: #{carriage.type}. "
+        puts "Свободно: #{carriage.free_volume}. Занято: #{carriage.volume} объема"
       end
     elsif train.type == 'passenger'
       train.all_carriages do |carriage|
-        puts "  Вагон номер: #{carriage.number}. Тип: #{carriage.type}. Свободно: #{carriage.free_seats}. Занято: #{carriage.seats} мест"
+        print "  Вагон номер: #{carriage.number}. "
+        print "Тип: #{carriage.type}. "
+        puts "Свободно: #{carriage.free_seats}. Занято: #{carriage.seats} мест"
       end
     end
   end
-
+  # rubocop:enable Metrics/AbcSize
 
   def error_menu
     puts 'Такого пункта нет'
@@ -357,7 +374,7 @@ class Railway
       when '1'
         stations_list
       when '2'
-        station_trains_list
+        station_trains_list_menu
       when '3'
         station_add
       else
@@ -366,7 +383,8 @@ class Railway
     end
   end
 
-  def  work_with_trains
+  # rubocop:disable Metrics/CyclomaticComplexity
+  def work_with_trains
     loop do
       case trains_menu
       when '0'
@@ -386,6 +404,7 @@ class Railway
       end
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def work_with_routes
     loop do
@@ -404,3 +423,4 @@ class Railway
     end
   end
 end
+# rubocop:enable Metrics/ClassLength

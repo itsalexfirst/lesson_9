@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Route
   include InstanceCounter
 
@@ -6,7 +8,7 @@ class Route
   def valid?
     validate!
     true
-  rescue
+  rescue StandardError
     false
   end
 
@@ -28,7 +30,7 @@ class Route
   private
 
   def validate!
-    raise "Номер не может быть пустым" if number == ''
-    raise "Начальная и конечная станция должны быть разными" if self.stations[0] == self.stations[-1]
+    raise 'Номер не может быть пустым' if number == ''
+    raise 'Начальная и конечная станция должны быть разными' if stations[0] == stations[-1]
   end
 end

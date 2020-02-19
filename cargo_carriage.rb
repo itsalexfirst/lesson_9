@@ -9,9 +9,8 @@ class CargoCarriage < Carriage
   end
 
   def load_cargo(volume)
-    if volume <= @free_volume
-      @volume += volume
-      @free_volume -= volume
-    end
+    return unless volume <= @free_volume
+    @volume += volume
+    @free_volume -= volume
   end
 end

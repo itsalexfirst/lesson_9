@@ -4,6 +4,7 @@
 class Train
   include ManufacturingCompany
   include InstanceCounter
+  include Validation
 
   attr_reader :number, :carriages, :type, :current_route
 
@@ -11,15 +12,12 @@ class Train
 
   @@trains = {}
 
+  validate :number, :presence
+  validate :number, :format, TRAIN_NUMBER_FORMAT
+  validate :number, :type, String
+
   def self.find(number)
     @@trains[number]
-  end
-
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
   end
 
   def initialize(number, type)
@@ -91,11 +89,6 @@ class Train
   end
 
   private
-
-  def validate!
-    raise 'Непрвильный формат номера поезда ХХХ-ХХ' if number !~ TRAIN_NUMBER_FORMAT
-    raise 'Поезд с таким номером уже есть' unless @@trains[number].nil?
-  end
 
   def current_station_index
     @current_route.stations.index(current_station)

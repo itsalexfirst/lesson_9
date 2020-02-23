@@ -3,20 +3,17 @@
 # rubocop:disable Style/ClassVars
 class Station
   include InstanceCounter
+  include Validation
 
   attr_reader :name, :trains
 
   @@stations = []
 
+  validate :name, :presence
+  validate :name, :type, String
+
   def self.all
     @@stations
-  end
-
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
   end
 
   def initialize(name)
@@ -41,13 +38,6 @@ class Station
 
   def all_trains
     @trains.each { |train| yield train } if block_given?
-  end
-
-  private
-
-  def validate!
-    raise 'Имя не может быть пустым' if name == ''
-    raise 'Станция с таким названием уже есть' if @@stations.find { |station| station.name == name }
   end
 end
 # rubocop:enable Style/ClassVars

@@ -2,15 +2,12 @@
 
 class Route
   include InstanceCounter
+  include Validation
 
   attr_reader :stations, :number
 
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
-  end
+  validate :number, :presence
+  validate :number, :type, String
 
   def initialize(start_station, end_station, number)
     @stations = [start_station, end_station]
@@ -28,9 +25,4 @@ class Route
   end
 
   private
-
-  def validate!
-    raise 'Номер не может быть пустым' if number == ''
-    raise 'Начальная и конечная станция должны быть разными' if stations[0] == stations[-1]
-  end
 end

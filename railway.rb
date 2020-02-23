@@ -43,7 +43,7 @@ class Railway
 
     @routes = [route]
 
-    train = PassengerTrain.new('trn-1p')
+    train = Train.new('trn-1p', 'passenger')
     train.add_route(route)
 
     @trains = [train]
